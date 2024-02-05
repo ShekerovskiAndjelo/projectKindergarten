@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Kindergarten;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class KindergartenController extends Controller
@@ -10,39 +11,55 @@ class KindergartenController extends Controller
     public function index()
     {
         // Fetch all kindergartens
-        $kindergartens = Kindergarten::all();
+        $kindergartens = Kindergarten::withTrashed()->paginate(10);
 
         // Return the view with kindergartens data
         return view('kindergartens.index', compact('kindergartens'));
     }
 
     public function create()
-    {
-        // Return the view for creating a kindergarten
-        return view('kindergartens.create');
-    }
+{
+    // Retrieve only users with the role 'director'
+    $directors = User::where('role', 'director')->get();
 
-    public function store(Request $request)
-    {
-        // Validate the request data
-        $request->validate([
-            'name' => 'required|string',
-            'city' => 'required|string',
-            'street' => 'required|string',
-            'managed_by' => 'required|exists:users,id' // Assuming managed_by is the user_id of the director
-        ]);
+    return view('kindergartens.create', compact('directors'));
+}
 
-        // Create a new kindergarten
-        $kindergarten = Kindergarten::create($request->all());
 
-        // Redirect to the index page with a success message
-        return redirect()->route('kindergartens.index')->with('success', 'Kindergarten created successfully.');
-    }
+public function store(Request $request)
+{
+    // Validate the request data
+    $request->validate([
+        'name' => 'required|string',
+        'city' => 'required|string',
+        'street' => 'required|string',
+        'managed_by' => 'required|exists:users,id' // Assuming managed_by is the user_id of the director
+    ]);
+
+
+
+
+    // Create a new kindergarten with the director's ID associated
+    Kindergarten::create([
+        'name' => $request->name,
+        'city' => $request->city,
+        'street' => $request->street,
+        'managed_by' => $request->managed_by // Assuming managed_by is the user_id of the director
+    ]);
+
+
+
+    // Redirect to the index page with a success message
+    return redirect()->route('kindergartens.index')->with('success', 'Kindergarten created successfully.');
+}
 
     public function edit(Kindergarten $kindergarten)
     {
+        // Retrieve only users with the role 'director'
+        $directors = User::where('role', 'director')->get();
+
         // Return the view for editing a kindergarten
-        return view('kindergartens.edit', compact('kindergarten'));
+        return view('kindergartens.edit', compact('kindergarten', 'directors'));
     }
 
     public function update(Request $request, Kindergarten $kindergarten)

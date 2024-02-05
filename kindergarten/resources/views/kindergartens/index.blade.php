@@ -6,44 +6,40 @@
         <div class="col-md-10">
             <div class="card">
                 <div class="card-header">
-                    {{ __('Users') }}
-                    <a href="{{ route('users.create') }}" class="btn btn-primary float-right">{{ __('Add User') }}</a>
+                    {{ __('Kindergartens') }}
+                    <a href="{{ route('kindergartens.create') }}" class="btn btn-primary float-right">{{ __('Add Kindergarten') }}</a>
                 </div>
 
                 <div class="card-body">
-                    @if (session('status'))
-                        <div class="alert alert-success" role="alert">
-                            {{ session('status') }}
-                        </div>
-                    @endif
-
                     <table class="table">
                         <thead>
                             <tr>
                                 <th scope="col">#</th>
                                 <th scope="col">Name</th>
-                                <th scope="col">Email</th>
-                                <th scope="col">Role</th>
+                                <th scope="col">City</th>
+                                <th scope="col">Street</th>
+                                <th scope="col">Managed By</th>
                                 <th scope="col">Actions</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($users as $user)
+                            @foreach ($kindergartens as $kindergarten)
                                 <tr>
-                                    <th scope="row">{{ $user->id }}</th>
-                                    <td>{{ $user->name }}</td>
-                                    <td>{{ $user->email }}</td>
-                                    <td>{{ $user->role }}</td>
+                                    <th scope="row">{{ $kindergarten->id }}</th>
+                                    <td>{{ $kindergarten->name }}</td>
+                                    <td>{{ $kindergarten->city }}</td>
+                                    <td>{{ $kindergarten->street }}</td>
+                                    <td>{{ $kindergarten->director->name }}</td>
                                     <td>
-                                        @if ($user->deleted_at)
-                                            <form action="{{ route('users.restore', $user->id) }}" method="POST">
+                                        @if ($kindergarten->deleted_at)
+                                            <form action="{{ route('kindergartens.restore', $kindergarten->id) }}" method="POST">
                                                 @csrf
                                                 @method('PUT')
                                                 <button type="submit" class="btn btn-primary btn-sm">Restore</button>
                                             </form>
                                         @else
-                                            <a href="{{ route('users.edit', $user->id) }}" class="btn btn-primary btn-sm">Edit</a>
-                                            <form action="{{ route('users.destroy', $user->id) }}" method="POST" class="d-inline">
+                                            <a href="{{ route('kindergartens.edit', $kindergarten->id) }}" class="btn btn-primary btn-sm">Edit</a>
+                                            <form action="{{ route('kindergartens.destroy', $kindergarten->id) }}" method="POST" class="d-inline">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="submit" class="btn btn-danger btn-sm">Delete</button>
@@ -54,8 +50,7 @@
                             @endforeach
                         </tbody>
                     </table>
-
-                    {{ $users->links() }}
+                    {{ $kindergartens->links() }}
                 </div>
             </div>
         </div>

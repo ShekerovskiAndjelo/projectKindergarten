@@ -30,10 +30,9 @@ Route::group(['middleware' => ['auth', 'role:admin']], function () {
     Route::get('/users/{user}/edit', [UserController::class, 'edit'])->name('users.edit');
     Route::put('/users/{user}', [UserController::class, 'update'])->name('users.update');
     Route::delete('/users/{user}', [UserController::class, 'destroy'])->name('users.destroy');
-    Route::get('/users/{user}/restore', [UserController::class, 'restore'])->name('users.restore');
+    Route::put('/users/{user}/restore', [UserController::class, 'restore'])->name('users.restore');
 
     Route::get('/generated_numbers', [GeneratedNumberController::class, 'index'])->name('generated_numbers.index');
-    Route::get('/generated_numbers/create', [GeneratedNumberController::class, 'create'])->name('generated_numbers.create');
     Route::post('/generated_numbers', [GeneratedNumberController::class, 'store'])->name('generated_numbers.store');
     Route::post('/generated_numbers/storeRandomNumbers', [GeneratedNumberController::class, 'storeRandomNumbers'])->name('generated_numbers.storeRandomNumbers');
 
@@ -43,7 +42,7 @@ Route::group(['middleware' => ['auth', 'role:admin']], function () {
     Route::get('/kindergartens/{kindergarten}/edit', [KindergartenController::class, 'edit'])->name('kindergartens.edit');
     Route::put('/kindergartens/{kindergarten}', [KindergartenController::class, 'update'])->name('kindergartens.update');
     Route::delete('/kindergartens/{kindergarten}', [KindergartenController::class, 'destroy'])->name('kindergartens.destroy');
-    Route::get('/kindergartens/{id}/restore', [KindergartenController::class, 'restore'])->name('kindergartens.restore');
+    Route::put('/kindergartens/{id}/restore', [KindergartenController::class, 'restore'])->name('kindergartens.restore');
 
 });
 

@@ -16,6 +16,60 @@
                         {{ __('Dashboard') }}
                     </x-nav-link>
                 </div>
+
+
+
+                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                    @if(auth()->user()->hasRole('director') || auth()->user()->hasRole('teacher'))
+                        <x-nav-link :href="route('groups.index')" :active="request()->routeIs('groups.index')">
+                            {{ __('Groups') }}
+                        </x-nav-link>
+                    @endif
+                </div>
+
+                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                    @if(auth()->user()->hasRole('director') || auth()->user()->hasRole('teacher'))
+                        <x-nav-link :href="route('attendances.index')" :active="request()->routeIs('attendances.index')">
+                            {{ __('Attendances') }}
+                        </x-nav-link>
+                    @endif
+                </div>
+
+                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                    @if(auth()->user()->hasRole('parent'))
+                        <x-nav-link :href="route('kids.index')" :active="request()->routeIs('kids.index')">
+                            {{ __('Kids') }}
+                        </x-nav-link>
+                    @endif
+                </div>
+
+                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                    @if(auth()->user()->hasRole('admin'))
+                        <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.index')">
+                            {{ __('Users') }}
+                        </x-nav-link>
+                    @endif
+                </div>
+
+                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                    @if(auth()->user()->hasRole('admin'))
+                        <x-nav-link :href="route('generated_numbers.index')" :active="request()->routeIs('generated_numbers.index')">
+                            {{ __('Generated numbers') }}
+                        </x-nav-link>
+                    @endif
+                </div>
+
+                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
+                    @if(auth()->user()->hasRole('admin'))
+                        <x-nav-link :href="route('kindergartens.index')" :active="request()->routeIs('kindergartens.index')">
+                            {{ __('Kindergartens') }}
+                        </x-nav-link>
+                    @endif
+                </div>
+
+
+
+
             </div>
 
             <!-- Settings Dropdown -->

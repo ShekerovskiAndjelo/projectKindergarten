@@ -10,13 +10,8 @@ class GeneratedNumberController extends Controller
 {
     public function index()
     {
-        $numbers = GeneratedNumber::all();
+        $numbers = GeneratedNumber::paginate(10);
         return view('generated_numbers.index', compact('numbers'));
-    }
-
-    public function create()
-    {
-        return view('generated_numbers.create');
     }
 
     public function store(Request $request)
@@ -46,6 +41,7 @@ class GeneratedNumberController extends Controller
                     'number' => $randomNumber,
                     'status' => 0, // Assuming default status is active
                 ]);
+                $existingNumbers[] = $randomNumber; // Add the number to the existing numbers array
                 $count++;
             }
         }
