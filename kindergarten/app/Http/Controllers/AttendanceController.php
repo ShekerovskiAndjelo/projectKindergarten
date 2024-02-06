@@ -10,42 +10,45 @@ class AttendanceController extends Controller
     public function index()
 {
     $user = auth()->user();
+    $attendances = [];
 
-    if ($user->hasRole('teacher')) {
-        // If the user is a teacher, fetch attendances related to groups they are associated with
+    if ($user->hasRole('director')) {
+        // If the user is a director, retrieve all attendances related to groups in their kindergarten
+        if ($user->kindergarten) {
+            $attendances = Attendance::whereIn('group_id', $user->kindergarten->groups->pluck('id'))->get();
+        }
+    } elseif ($user->hasRole('teacher')) {
+        // If the user is a teacher, retrieve attendances related to groups they are associated with
         $attendances = $user->groups()->with('attendances')->get()->pluck('attendances')->flatten();
-    } else {
-        // For other roles, fetch all attendances
-        $attendances = Attendance::all();
     }
 
     // Return the view with attendance data
     return view('attendances.index', compact('attendances'));
 }
 
-    public function create()
-    {
-        // Return the view for creating an attendance
-        return view('attendances.create');
-    }
+    // public function create()
+    // {
+    //     // Return the view for creating an attendance
+    //     return view('attendances.create');
+    // }
 
-    public function store(Request $request)
-    {
-        // Validate the request data
-        $request->validate([
-            'kid_id' => 'required|exists:kids,id',
-            'group_id' => 'required|exists:groups,id',
-            'kindergarten_id' => 'required|exists:kindergartens,id',
-            'date' => 'required|date',
-            'status' => 'required|boolean'
-        ]);
+    // public function store(Request $request)
+    // {
+    //     // Validate the request data
+    //     $request->validate([
+    //         'kid_id' => 'required|exists:kids,id',
+    //         'group_id' => 'required|exists:groups,id',
+    //         'kindergarten_id' => 'required|exists:kindergartens,id',
+    //         'date' => 'required|date',
+    //         'status' => 'required|boolean'
+    //     ]);
 
-        // Create a new attendance record
-        $attendance = Attendance::create($request->all());
+    //     // Create a new attendance record
+    //     $attendance = Attendance::create($request->all());
 
-        // Redirect to the index page with a success message
-        return redirect()->route('attendances.index')->with('success', 'Attendance created successfully.');
-    }
+    //     // Redirect to the index page with a success message
+    //     return redirect()->route('attendances.index')->with('success', 'Attendance created successfully.');
+    // }
 
     public function edit(Attendance $attendance)
     {
