@@ -22,6 +22,7 @@
                             <tr>
                                 <th>Name</th>
                                 <th>Age</th>
+                                <th>Group</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
@@ -30,6 +31,13 @@
                                 <tr>
                                     <td>{{ $kid->name }}</td>
                                     <td>{{ $kid->age }}</td>
+                                    <td>
+                                        @if ($kid->name)
+                                            {{ $kid->group->name ?? 'No Group' }}
+                                        @else
+                                            {{ $kid->group->name ?? '' }}
+                                        @endif
+                                    </td>
                                     <td>
                                         <a href="{{ route('kids.edit', $kid->id) }}" class="btn btn-primary">Edit</a>
                                     </td>

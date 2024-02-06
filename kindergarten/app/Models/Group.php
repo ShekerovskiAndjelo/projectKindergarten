@@ -41,4 +41,9 @@ class Group extends Model
     {
         return $this->hasMany(Attendance::class);
     }
+
+    public function kids()
+    {
+        return $this->hasMany(Kid::class);
+    }
 }

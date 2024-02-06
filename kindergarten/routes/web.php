@@ -73,14 +73,15 @@ Route::group(['middleware' => ['auth', 'role:director']], function () {
     // Route::put('/attendances/{attendance}', [AttendanceController::class, 'update'])->name('attendances.update');
 });
 
-
-
-Route::group(['middleware' => ['auth', 'role:parent']], function () {
+Route::group(['middleware' => ['auth', 'role:parent,director']], function () {
     Route::get('/kids', [KidController::class, 'index'])->name('kids.index');
-    Route::get('/kids/create', [KidController::class, 'create'])->name('kids.create');
-    Route::post('/kids', [KidController::class, 'store'])->name('kids.store');
     Route::get('/kids/{kid}/edit', [KidController::class, 'edit'])->name('kids.edit');
     Route::put('/kids/{kid}', [KidController::class, 'update'])->name('kids.update');
+});
+
+Route::group(['middleware' => ['auth', 'role:parent']], function () {
+    Route::get('/kids/create', [KidController::class, 'create'])->name('kids.create');
+    Route::post('/kids', [KidController::class, 'store'])->name('kids.store');
     Route::delete('/kids/{kid}', [KidController::class, 'destroy'])->name('kids.destroy');
 });
 

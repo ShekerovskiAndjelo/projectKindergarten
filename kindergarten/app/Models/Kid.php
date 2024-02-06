@@ -19,6 +19,7 @@ class Kid extends Model
         'age',
         'generated_number_id',
         'parent_id',
+        'group_id'
     ];
 
     /**
@@ -43,5 +44,10 @@ class Kid extends Model
     public function attendances()
     {
         return $this->hasMany(Attendance::class);
+    }
+
+    public function group()
+    {
+        return $this->belongsTo(Group::class);
     }
 }

@@ -28,7 +28,22 @@
                             </div>
                         </div>
 
-                        
+                        @if(auth()->user()->hasRole('director'))
+                            <div class="form-group row">
+                                <label for="group_id" class="col-md-4 col-form-label text-md-right">{{ __('Group') }}</label>
+
+                                <div class="col-md-6">
+                                    <select id="group_id" class="form-control" name="group_id">
+                                        @foreach($groups as $group)
+                                            <option value="{{ $group->id }}" {{ $kid->group_id == $group->id ? 'selected' : '' }}>
+                                                {{ $group->name }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                </div>
+                            </div>
+                        @endif
+
                         <div class="form-group row mb-0">
                             <div class="col-md-6 offset-md-4">
                                 <button type="submit" class="btn btn-primary">
