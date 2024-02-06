@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -19,20 +20,26 @@ class UserController extends Controller
     }
 
     public function store(Request $request)
-    {
-        // Validate the request data as needed
-        $userData = $request->validate([
-            'name' => 'required|string',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|string|min:6',
-            'role' => 'required|string|in:admin,director,teacher,parent',
-        ]);
+{
+    // Validate the request data as needed
+    $userData = $request->validate([
+        'name' => 'required|string',
+        'email' => 'required|email|unique:users,email',
+        'password' => 'required|string|min:6',
+        'role' => 'required|string|in:admin,director,teacher,parent',
+    ]);
 
-        // Create a new user
-        $user = User::create($userData);
+    // Hash the password
+    $hashedPassword = Hash::make($request->password);
 
-        return redirect()->route('users.index')->with('success', 'User created successfully.');
-    }
+    // Add the hashed password to the validated data
+    $userData['password'] = $hashedPassword;
+
+    // Create a new user
+    $user = User::create($userData);
+
+    return redirect()->route('users.index')->with('success', 'User created successfully.');
+}
 
     public function edit(User $user)
     {

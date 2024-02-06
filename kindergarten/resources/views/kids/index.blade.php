@@ -7,8 +7,11 @@
             <div class="card">
                 <div class="card-header">
                     {{ __('Kids') }}
-                    <a href="{{ route('kids.create') }}" class="btn btn-primary float-right">{{ __('Register Kid') }}</a>
+                    @if (!auth()->user()->hasRole('director'))
+                        <a href="{{ route('kids.create') }}" class="btn btn-primary float-right">{{ __('Register Kid') }}</a>
+                    @endif
                 </div>
+
 
                 <div class="card-body">
                     @if(session('success'))

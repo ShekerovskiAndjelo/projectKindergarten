@@ -35,10 +35,12 @@
                         <!-- Teacher ID Field (Select Dropdown) -->
                         <div class="form-group">
                             <label for="teacher_id">{{ __('Teacher') }}:</label>
-                            <select name="teacher_id" id="teacher_id" class="form-control" required>
-                                <option value="" disabled>{{ __('Select Teacher') }}</option>
+                            <select id="teacher_id" class="form-control @error('teacher_id') is-invalid @enderror" name="teacher_id" required>
+                                <option value="" disabled>Select Teacher</option>
                                 @foreach($teachers as $teacher)
-                                    <option value="{{ $teacher->id }}">{{ $teacher->name }}</option>
+                                    @if (!$teacher->groups->count()) <!-- Check if the teacher is not linked with any group -->
+                                        <option value="{{ $teacher->id }}" {{ $group->teacher_id == $teacher->id ? 'selected' : '' }}>{{ $teacher->name }}</option>
+                                    @endif
                                 @endforeach
                             </select>
                         </div>

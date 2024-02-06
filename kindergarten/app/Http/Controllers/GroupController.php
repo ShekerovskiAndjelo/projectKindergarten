@@ -15,8 +15,12 @@ class GroupController extends Controller
     $groups = [];
 
     if ($user->hasRole('director')) {
-        // If the user is a director, retrieve all groups including trashed ones
-        $groups = Group::withTrashed()->get();
+        // If the user is a director, retrieve groups linked with kindergartens managed by the director
+        $groups = Group::whereIn('kindergarten_id', function($query) use ($user) {
+            $query->select('id')
+                  ->from('kindergartens')
+                  ->where('managed_by', $user->id);
+        })->withTrashed()->get();
     } elseif ($user->hasRole('teacher')) {
         // If the user is a teacher, retrieve only groups associated with the teacher's ID including trashed ones
         $groups = Group::where('teacher_id', $user->id)->withTrashed()->get();
@@ -27,6 +31,7 @@ class GroupController extends Controller
 }
 
 
+
 public function create()
 {
     // Retrieve the kindergarten managed by the logged-in director
@@ -35,7 +40,10 @@ public function create()
     // Retrieve teachers available for selection
     $teachers = User::where('role', 'teacher')->get();
 
-    return view('groups.create', compact('kindergarten', 'teachers'));
+    // Instantiate an empty group object
+    $group = new Group();
+
+    return view('groups.create', compact('kindergarten', 'teachers', 'group'));
 }
 
 public function store(Request $request)
