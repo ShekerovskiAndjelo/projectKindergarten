@@ -37,19 +37,23 @@
                                     <td>{{ $group->kindergarten->name }}</td>
                                     <td>{{ $group->teacher->name }}</td>
                                     <td>
-                                        @if ($group->trashed())
-                                            <form action="{{ route('groups.restore', $group->id) }}" method="POST">
-                                                @csrf
-                                                @method('GET')
-                                                <button type="submit" class="btn btn-primary btn-sm">Restore</button>
-                                            </form>
-                                        @else
+                                        @if (auth()->user()->hasRole('director'))
+                                            @if ($group->trashed())
+                                                <form action="{{ route('groups.restore', $group->id) }}" method="POST">
+                                                    @csrf
+                                                    @method('GET')
+                                                    <button type="submit" class="btn btn-primary btn-sm">Restore</button>
+                                                </form>
+                                            @else
+                                                <a href="{{ route('groups.edit', $group->id) }}" class="btn btn-primary btn-sm">Edit</a>
+                                                <form action="{{ route('groups.destroy', $group->id) }}" method="POST" class="d-inline">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this group?')">Delete</button>
+                                                </form>
+                                            @endif
+                                        @elseif (auth()->user()->hasRole('teacher'))
                                             <a href="{{ route('groups.edit', $group->id) }}" class="btn btn-primary btn-sm">Edit</a>
-                                            <form action="{{ route('groups.destroy', $group->id) }}" method="POST" class="d-inline">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this group?')">Delete</button>
-                                            </form>
                                         @endif
                                     </td>
                                 </tr>

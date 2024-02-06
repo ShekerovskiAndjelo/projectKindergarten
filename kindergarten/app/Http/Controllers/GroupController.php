@@ -15,16 +15,17 @@ class GroupController extends Controller
     $groups = [];
 
     if ($user->hasRole('director')) {
-        // If the user is a director, retrieve all groups
-        $groups = Group::all();
+        // If the user is a director, retrieve all groups including trashed ones
+        $groups = Group::withTrashed()->get();
     } elseif ($user->hasRole('teacher')) {
-        // If the user is a teacher, retrieve only groups associated with the teacher's ID
-        $groups = Group::where('teacher_id', $user->id)->get();
+        // If the user is a teacher, retrieve only groups associated with the teacher's ID including trashed ones
+        $groups = Group::where('teacher_id', $user->id)->withTrashed()->get();
     }
 
     // Return the view with groups data
     return view('groups.index', compact('groups'));
 }
+
 
 public function create()
 {
@@ -63,18 +64,25 @@ public function store(Request $request)
 }
 
 
-    public function edit(Group $group)
+public function edit(Group $group)
 {
     $user = auth()->user();
+    $teachers = [];
 
     if ($user->hasRole('director') || $user->id === $group->teacher_id) {
-        // If the user is a director or the group's teacher, proceed with editing
-        return view('groups.edit', compact('group'));
+        // Retrieve teachers if the user is a director or the group's teacher
+        $teachers = User::where('role', 'teacher')->get();
+    }
+
+    if ($user->hasRole('director') || $user->id === $group->teacher_id) {
+        // If the user is authorized, proceed with editing
+        return view('groups.edit', compact('group', 'teachers'));
     } else {
         // Redirect the user back with an error message
         return redirect()->route('groups.index')->with('error', 'You are not authorized to edit this group.');
     }
 }
+
 
 public function update(Request $request, Group $group)
 {
@@ -86,7 +94,6 @@ public function update(Request $request, Group $group)
 
     // If the user is a director, allow updating the kindergarten_id and teacher_id
     if (auth()->user()->hasRole('director')) {
-        $rules['kindergarten_id'] = 'required|exists:kindergartens,id';
         $rules['teacher_id'] = 'required|exists:users,id';
     }
 
