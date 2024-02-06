@@ -4,12 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Models\Group;
 use Illuminate\Http\Request;
+use App\Models\Kindergarten;
+use App\Models\User;
 
 class GroupController extends Controller
 {
     public function index()
 {
     $user = auth()->user();
+    $groups = [];
 
     if ($user->hasRole('director')) {
         // If the user is a director, retrieve all groups
@@ -23,14 +26,20 @@ class GroupController extends Controller
     return view('groups.index', compact('groups'));
 }
 
-    public function create()
-    {
-        // Return the view for creating a group
-        return view('groups.create');
-    }
+public function create()
+{
+    // Retrieve the kindergarten managed by the logged-in director
+    $kindergarten = Kindergarten::where('managed_by', auth()->id())->first();
 
-    public function store(Request $request)
-    {
+    // Retrieve teachers available for selection
+    $teachers = User::where('role', 'teacher')->get();
+
+    return view('groups.create', compact('kindergarten', 'teachers'));
+}
+
+public function store(Request $request)
+{
+    try {
         // Validate the request data
         $request->validate([
             'name' => 'required|string',
@@ -44,7 +53,15 @@ class GroupController extends Controller
 
         // Redirect to the index page with a success message
         return redirect()->route('groups.index')->with('success', 'Group created successfully.');
+    } catch (\Exception $e) {
+        // Log the error
+        \Log::error('Error creating group: ' . $e->getMessage());
+
+        // Redirect back with error message
+        return redirect()->back()->with('error', 'Failed to create group. Please try again.');
     }
+}
+
 
     public function edit(Group $group)
 {

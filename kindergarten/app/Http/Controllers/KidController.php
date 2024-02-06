@@ -9,15 +9,15 @@ use Illuminate\Http\Request;
 class KidController extends Controller
 {
     public function index()
-    {
-        // Get the authenticated user's parent_id
-        $parent_id = auth()->user()->id;
+{
+    // Get the authenticated user's parent_id
+    $parent_id = auth()->user()->id;
 
-        // Retrieve only kids associated with the parent_id
-        $kids = Kid::where('parent_id', $parent_id)->get();
+    // Retrieve all kids associated with the parent_id, including trashed ones
+    $kids = Kid::where('parent_id', $parent_id)->withTrashed()->get();
 
-        return view('kids.index', compact('kids'));
-    }
+    return view('kids.index', compact('kids'));
+}
 
     public function create()
     {
@@ -26,26 +26,37 @@ class KidController extends Controller
     }
 
     public function store(Request $request)
-    {
-        $request->validate([
-            'name' => 'required|string',
-            'age' => 'required|integer|min:1',
-            'generated_number_id' => 'required|exists:generated_numbers,id',
-        ]);
+{
+    $request->validate([
+        'name' => 'required|string',
+        'age' => 'required|integer|min:1',
+        'generated_number' => 'required|exists:generated_numbers,number,status,0',
+    ]);
 
+    // Find the generated number by its number
+    $generatedNumber = GeneratedNumber::where('number', $request->generated_number)
+                                       ->where('status', 0)
+                                       ->first();
+
+    // If the generated number exists, create the kid
+    if ($generatedNumber) {
         $kid = Kid::create([
             'name' => $request->name,
             'age' => $request->age,
-            'generated_number_id' => $request->generated_number_id,
-            'parent_id' => auth()->user()->id, // Set parent_id to the authenticated user's id
+            'generated_number_id' => $generatedNumber->id,
+            'parent_id' => auth()->user()->id,
         ]);
 
         // Update the status of the associated generated number
-        $generatedNumber = GeneratedNumber::findOrFail($request->generated_number_id);
         $generatedNumber->update(['status' => 1]);
 
         return redirect()->route('kids.index')->with('success', 'Kid created successfully.');
+    } else {
+        // If the generated number doesn't exist or has already been used, return back with an error message
+        return back()->withErrors(['generated_number' => 'The provided generated number is invalid or has already been used.'])->withInput();
     }
+}
+
 
     public function edit(Kid $kid)
     {
@@ -58,22 +69,15 @@ class KidController extends Controller
         $request->validate([
             'name' => 'required|string',
             'age' => 'required|integer|min:1',
-            'generated_number_id' => 'required|exists:generated_numbers,id',
         ]);
 
         $kid->update([
             'name' => $request->name,
             'age' => $request->age,
-            'generated_number_id' => $request->generated_number_id,
         ]);
 
         return redirect()->route('kids.index')->with('success', 'Kid updated successfully.');
     }
 
-    public function destroy(Kid $kid)
-    {
-        $kid->delete();
 
-        return redirect()->route('kids.index')->with('success', 'Kid deleted successfully.');
-    }
 }

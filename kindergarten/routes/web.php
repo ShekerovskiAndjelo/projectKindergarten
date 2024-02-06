@@ -46,31 +46,34 @@ Route::group(['middleware' => ['auth', 'role:admin']], function () {
 
 });
 
-Route::group(['middleware' => ['auth', 'role:director']], function () {
+
+Route::group(['middleware' => ['auth', 'role:teacher,director']], function () {
     Route::get('/groups', [GroupController::class, 'index'])->name('groups.index');
-    Route::get('/groups/create', [GroupController::class, 'create'])->name('groups.create');
-    Route::post('/groups', [GroupController::class, 'store'])->name('groups.store');
     Route::get('/groups/{group}/edit', [GroupController::class, 'edit'])->name('groups.edit');
     Route::put('/groups/{group}', [GroupController::class, 'update'])->name('groups.update');
+
+    Route::get('/attendances', [AttendanceController::class, 'index'])->name('attendances.index');
+    Route::get('/attendances/{attendance}/edit', [AttendanceController::class, 'edit'])->name('attendances.edit');
+    Route::put('/attendances/{attendance}', [AttendanceController::class, 'update'])->name('attendances.update');
+});
+
+Route::group(['middleware' => ['auth', 'role:director']], function () {
+    // Route::get('/groups', [GroupController::class, 'index'])->name('groups.index');
+    Route::get('/groups/create', [GroupController::class, 'create'])->name('groups.create');
+    Route::post('/groups', [GroupController::class, 'store'])->name('groups.store');
+    // Route::get('/groups/{group}/edit', [GroupController::class, 'edit'])->name('groups.edit');
+    // Route::put('/groups/{group}', [GroupController::class, 'update'])->name('groups.update');
     Route::delete('/groups/{group}', [GroupController::class, 'destroy'])->name('groups.destroy');
     Route::get('/groups/{id}/restore', [GroupController::class, 'restore'])->name('groups.restore');
 
-    Route::get('/attendances', [AttendanceController::class, 'index'])->name('attendances.index');
+    // Route::get('/attendances', [AttendanceController::class, 'index'])->name('attendances.index');
     Route::get('/attendances/create', [AttendanceController::class, 'create'])->name('attendances.create');
     Route::post('/attendances', [AttendanceController::class, 'store'])->name('attendances.store');
-    Route::get('/attendances/{attendance}/edit', [AttendanceController::class, 'edit'])->name('attendances.edit');
-    Route::put('/attendances/{attendance}', [AttendanceController::class, 'update'])->name('attendances.update');
+    // Route::get('/attendances/{attendance}/edit', [AttendanceController::class, 'edit'])->name('attendances.edit');
+    // Route::put('/attendances/{attendance}', [AttendanceController::class, 'update'])->name('attendances.update');
 });
 
-Route::group(['middleware' => ['auth', 'role:teacher']], function () {
-    Route::get('/groups', [GroupController::class, 'index'])->name('groups.index');
-    Route::get('/groups/{group}/edit', [GroupController::class, 'edit'])->name('groups.edit');
-    Route::put('/groups/{group}', [GroupController::class, 'update'])->name('groups.update');
 
-    Route::get('/attendances', [AttendanceController::class, 'index'])->name('attendances.index');
-    Route::get('/attendances/{attendance}/edit', [AttendanceController::class, 'edit'])->name('attendances.edit');
-    Route::put('/attendances/{attendance}', [AttendanceController::class, 'update'])->name('attendances.update');
-});
 
 Route::group(['middleware' => ['auth', 'role:parent']], function () {
     Route::get('/kids', [KidController::class, 'index'])->name('kids.index');
