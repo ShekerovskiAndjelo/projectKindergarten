@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use PDF;
 use App\Models\Kid;
 use App\Models\GeneratedNumber;
 use App\Models\Group;
@@ -117,6 +118,15 @@ public function update(Request $request, Kid $kid)
     return redirect()->route('kids.index')->with('success', 'Kid updated successfully.');
 }
 
+public function downloadPDF()
+    {
+        $kids = Kid::all(); // Retrieve the kids data from the database
+
+        $pdf = PDF::loadView('pdfs.kids', compact('kids'));
+
+        // Download the PDF file with a custom name
+        return $pdf->download('kids_information.pdf');
+    }
 
 
 

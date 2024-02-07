@@ -44,6 +44,8 @@ Route::group(['middleware' => ['auth', 'role:admin']], function () {
     Route::delete('/kindergartens/{kindergarten}', [KindergartenController::class, 'destroy'])->name('kindergartens.destroy');
     Route::put('/kindergartens/{id}/restore', [KindergartenController::class, 'restore'])->name('kindergartens.restore');
 
+    Route::get('/download-pdf', [KidController::class, 'downloadPDF'])->name('pdf.download');
+
 });
 
 Route::group(['middleware' => ['auth', 'role:teacher']], function () {
